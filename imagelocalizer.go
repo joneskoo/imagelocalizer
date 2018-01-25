@@ -18,7 +18,11 @@ import (
 	"strings"
 )
 
+// imageURLPattern matches HTTP image references
 var imageURLPattern = regexp.MustCompile(`(?i)"(http[^"]*\.jpg)"`)
+
+// scalePattern matches the scaling in the blogspot image URLs, e.g.
+// ..../s1600/image.jpg.
 var scalePattern = regexp.MustCompile(`(?i)/s[0-9]+(-h)?`)
 
 func main() {
@@ -57,6 +61,7 @@ func process(filename string) error {
 		if _, ok := replacements[u]; ok {
 			continue
 		}
+		// Download the original size images from blogspot.
 		originalSizeURL := scalePattern.ReplaceAllString(u, "/s3200")
 		destDir := filepath.Dir(filename)
 		destFile, err := downloadFile(destDir, originalSizeURL)
